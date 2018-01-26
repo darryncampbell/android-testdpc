@@ -137,6 +137,9 @@ import java.util.List;
 import java.util.Set;
 
 import static android.os.UserManager.DISALLOW_INSTALL_UNKNOWN_SOURCES;
+import static android.provider.Settings.Secure.LOCATION_MODE;
+import static android.provider.Settings.Secure.LOCATION_MODE_BATTERY_SAVING;
+import static android.provider.Settings.Secure.LOCATION_MODE_OFF;
 import static com.afwsamples.testdpc.common.preference.DpcPreferenceHelper.NO_CUSTOM_CONSTRIANT;
 
 /**
@@ -233,6 +236,7 @@ public class PolicyManagementFragment extends BaseSearchablePolicyPreferenceFrag
     private static final String SECURITY_PATCH_KEY = "security_patch";
     private static final String PASSWORD_COMPLIANT_KEY = "password_compliant";
     private static final String DISABLE_CAMERA_KEY = "disable_camera";
+    private static final String DISABLE_LOCATION_KEY = "disable_location";
     private static final String DISABLE_KEYGUARD = "disable_keyguard";
     private static final String DISABLE_SCREEN_CAPTURE_KEY = "disable_screen_capture";
     private static final String DISABLE_STATUS_BAR = "disable_status_bar";
@@ -327,6 +331,7 @@ public class PolicyManagementFragment extends BaseSearchablePolicyPreferenceFrag
     private TelephonyManager mTelephonyManager;
 
     private SwitchPreference mDisableCameraSwitchPreference;
+    private SwitchPreference mDisableLocationSwitchPreference;
     private SwitchPreference mDisableScreenCaptureSwitchPreference;
     private SwitchPreference mMuteAudioSwitchPreference;
 
@@ -381,9 +386,11 @@ public class PolicyManagementFragment extends BaseSearchablePolicyPreferenceFrag
         findPreference(REMOVE_USER_KEY).setOnPreferenceClickListener(this);
         findPreference(SET_AFFILIATION_IDS_KEY).setOnPreferenceClickListener(this);
         mDisableCameraSwitchPreference = (SwitchPreference) findPreference(DISABLE_CAMERA_KEY);
+        mDisableLocationSwitchPreference = (SwitchPreference) findPreference(DISABLE_LOCATION_KEY);
         findPreference(CAPTURE_IMAGE_KEY).setOnPreferenceClickListener(this);
         findPreference(CAPTURE_VIDEO_KEY).setOnPreferenceClickListener(this);
         mDisableCameraSwitchPreference.setOnPreferenceChangeListener(this);
+        mDisableLocationSwitchPreference.setOnPreferenceChangeListener(this);
         mDisableScreenCaptureSwitchPreference = (SwitchPreference) findPreference(
                 DISABLE_SCREEN_CAPTURE_KEY);
         mDisableScreenCaptureSwitchPreference.setOnPreferenceChangeListener(this);
@@ -901,6 +908,9 @@ public class PolicyManagementFragment extends BaseSearchablePolicyPreferenceFrag
                 // Reload UI to verify the camera is enable / disable correctly.
                 reloadCameraDisableUi();
                 return true;
+            case DISABLE_LOCATION_KEY:
+                setLocationDisabled((Boolean) newValue);
+                return true;
             case ENABLE_BACKUP_SERVICE:
                 setBackupServiceEnabled((Boolean) newValue);
                 reloadEnableBackupServiceUi();
@@ -958,6 +968,21 @@ public class PolicyManagementFragment extends BaseSearchablePolicyPreferenceFrag
     @TargetApi(Build.VERSION_CODES.M)
     private void setCameraDisabled(boolean disabled) {
         mDevicePolicyManager.setCameraDisabled(mAdminComponentName, disabled);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void setLocationDisabled(boolean disabled)
+    {
+        if (disabled)
+        {
+            //mDevicePolicyManager.setSecureSetting(mAdminComponentName, LOCATION_MODE, "LOCATION_MODE_OFF");
+            mDevicePolicyManager.setSecureSetting(mAdminComponentName, LOCATION_MODE, "" + LOCATION_MODE_OFF);
+        }
+        else
+        {
+            mDevicePolicyManager.setSecureSetting(mAdminComponentName, LOCATION_MODE, "" + LOCATION_MODE_BATTERY_SAVING);
+        }
+
     }
 
     @TargetApi(Build.VERSION_CODES.N)

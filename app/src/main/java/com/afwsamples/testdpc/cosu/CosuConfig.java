@@ -36,6 +36,10 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
+import static android.provider.Settings.Secure.LOCATION_MODE;
+import static android.provider.Settings.Secure.LOCATION_MODE_BATTERY_SAVING;
+import static android.provider.Settings.Secure.LOCATION_MODE_OFF;
+
 /**
  * This class represents the specific cosu set up we want to achieve. The set up is read from an
  * XML config file. Additional apps are downloaded and the specified policies are applied.
@@ -53,6 +57,7 @@ import java.util.Set;
     private static final String TAG_DISABLE_STATUS_BAR = "disable-status-bar";
     private static final String TAG_DISABLE_KEYGUARD = "disable-keyguard";
     private static final String TAG_DISABLE_CAMERA = "disable-camera";
+    private static final String TAG_DISABLE_LOCATION = "disable-location";
     private static final String TAG_DISABLE_SCREEN_CAPTURE = "disable-screen-capture";
 
     private static final String ATTRIBUTE_DOWNLOAD_LOCATION = "download-location";
@@ -77,6 +82,7 @@ import java.util.Set;
     private boolean mDisableKeyguard = false;
     private boolean mDisableScreenCapture = false;
     private boolean mDisableCamera = false;
+    private boolean mDisableLocation = false;
 
     /**
      * Parses the config xml file given in the form of an InputStream.
@@ -161,6 +167,14 @@ import java.util.Set;
         }
         dpm.setScreenCaptureDisabled(admin, mDisableScreenCapture);
         dpm.setCameraDisabled(admin, mDisableCamera);
+        if (mDisableLocation)
+        {
+            dpm.setSecureSetting(admin, LOCATION_MODE, "" + LOCATION_MODE_OFF);
+        }
+        else
+        {
+            dpm.setSecureSetting(admin, LOCATION_MODE, "" + LOCATION_MODE_BATTERY_SAVING);
+        }
 
         return true;
     }
@@ -302,6 +316,9 @@ import java.util.Set;
             } else if (TAG_DISABLE_CAMERA.equals(name)) {
                 mDisableCamera = Boolean.parseBoolean(parser.getAttributeValue(null,
                         ATTRIBUTE_VALUE));
+            } else if (TAG_DISABLE_LOCATION.equals(name)) {
+                mDisableLocation = Boolean.parseBoolean(parser.getAttributeValue(null,
+                        ATTRIBUTE_VALUE));
             } else if (TAG_DISABLE_SCREEN_CAPTURE.equals(name)) {
                 mDisableScreenCapture = Boolean.parseBoolean(parser.getAttributeValue(null,
                         ATTRIBUTE_VALUE));
@@ -370,6 +387,8 @@ import java.util.Set;
         builder.append("Disable screen capture: ").append(mDisableScreenCapture).append(NEW_LINE);
 
         builder.append("Disable camera: ").append(mDisableCamera).append(NEW_LINE);
+
+        builder.append("Disable location: ").append(mDisableLocation).append(NEW_LINE);
 
         builder.append("User restrictions:").append(NEW_LINE);
         dumpSet(builder, mUserRestrictions);

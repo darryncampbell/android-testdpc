@@ -162,6 +162,7 @@
     <string name="camera_title">Camera, screen capture and audio</string>
     <string name="display_media">Display Media</string>
     <string name="disable_camera">Disable camera</string>
+    <string name="disable_location">Disable location</string>
     <string name="capture_image">Capture image</string>
     <string name="capture_video">Capture video</string>
     <string name="camera_app_not_found">Ensure that a camera app is enabled</string>
@@ -628,6 +629,7 @@
     <!-- Keyguard features -->
     <string name="keyguard_features">Keyguard features</string>
     <string name="keyguard_disable_secure_camera">Disable secure camera</string>
+    <string name="keyguard_disable_secure_location">Disable secure location</string>
     <string name="keyguard_disable_secure_notifications">Disable secure notifications</string>
     <string name="keyguard_disable_unredacted_notifications">Disable unredacted notifications</string>
     <string name="keyguard_disable_trust_agents">Disable trust agents</string>
